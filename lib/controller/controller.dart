@@ -1,38 +1,22 @@
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:kamppus_merdeka/model/model.dart';
 
-import 'package:kamppus_merdeka/service/service.dart';
+class UserController extends GetxController {
+  RxList<UserModel> users = <UserModel>[].obs;
 
+  Future<void> fetchUsers({int page = 1, int perPage = 10}) async {
+    final response = await http.get(
+      Uri.parse('https://reqres.in/api/users?page=$page&per_page=$perPage'),
+    );
 
-class DataController extends GetxController {
-  final ApiService _apiService = ApiService();
-  final RxList<Data> _users = <Data>[].obs;
-  final RxInt _currentPage = 1.obs;
-  final RxBool _isLoading = false.obs;
-
-  // ignore: invalid_use_of_protected_member
-  List<Data> get users => _users.value;
-  int get currentPage => _currentPage.value;
-  bool get isLoading => _isLoading.value;
-
-  @override
-  void onInit() {
-    fetchUsers();
-    super.onInit();
-  }
-
-  void fetchUsers() async {
-    try {
-      _isLoading.value = true;
-
-      final List<Data> fetchedUsers = await _apiService.getUsers(currentPage);
-      _users.addAll(fetchedUsers);
-
-      _currentPage.value++;
-    } catch (e) {
-      print(e.toString());
-    } finally {
-      _isLoading.value = false;
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body)['data'];
+      List<UserModel> userList =
+          data.map((e) => UserModel.fromJson(e)).toList();
+      users.addAll(userList);
     }
   }
 }

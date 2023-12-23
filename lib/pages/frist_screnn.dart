@@ -9,7 +9,9 @@ class FristScreen extends StatefulWidget {
 }
 
 class _FristScreenState extends State<FristScreen> {
-  TextEditingController _textEditingController = TextEditingController();
+  TextEditingController _textEditingController =
+      TextEditingController(text: '');
+  bool isPalindrome = false;
 
   @override
   void dispose() {
@@ -17,32 +19,10 @@ class _FristScreenState extends State<FristScreen> {
     super.dispose();
   }
 
-  bool isPalindrome(String text) {
-    String reversedText = String.fromCharCodes(text.runes.toList().reversed);
-    return text.toLowerCase() == reversedText.toLowerCase();
-  }
-
-  void checkPalindrome() {
-    String text = _textEditingController.text;
-    if (isPalindrome(text)) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Center(child: Text('IS PALINDROME')),
-          );
-        },
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Center(child: Text('NOT PALINDROME')),
-          );
-        },
-      );
-    }
+  bool isPalindromeCheck(String text) {
+    String cleanText = text.replaceAll(RegExp(r'[^\w\s]'), '').toLowerCase();
+    String reversedText = cleanText.split('').reversed.join('');
+    return cleanText == reversedText;
   }
 
   @override
@@ -142,7 +122,39 @@ class _FristScreenState extends State<FristScreen> {
                         width: MediaQuery.of(context).size.width,
                         height: 40,
                         child: ElevatedButton(
-                          onPressed: checkPalindrome,
+                          onPressed: () {
+                            setState(() {
+                              // Check if the entered text is not empty
+                              String text = _textEditingController.text;
+                              if (text.isEmpty) {
+                                // Check if the entered text is a palindrome
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Center(
+                                          child: Text('Field Must Required')),
+                                    );
+                                  },
+                                );
+                              } else if (text.isNotEmpty) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Center(
+                                          child: Text(isPalindrome
+                                              ? "Palindrome"
+                                              : "Not Palindrome")),
+                                    );
+                                  },
+                                );
+                                isPalindrome = isPalindromeCheck(text);
+                              } else {
+                                isPalindrome = false;
+                              }
+                            });
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF2A637B),
                             elevation: 3,

@@ -1,111 +1,104 @@
 import 'package:flutter/material.dart';
 import 'package:kamppus_merdeka/pages/third_screen.dart';
 
+import 'package:get/get.dart';
+import 'package:kamppus_merdeka/controller/controller.dart';
+
 class SecondScreen extends StatelessWidget {
-  const SecondScreen({super.key});
+  final UserController userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        bottomNavigationBar: GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ThirdScreen(),
-              ),
-            );
-          },
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 40,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Color(0xFF2A637B),
-              ),
-              child: Center(
-                child: Text(
-                  'NEXT',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+    return Scaffold(
+      floatingActionButton: GestureDetector(
+        onTap: () {
+          // Navigate to the third screen
+          Get.to(() => ThirdScreen());
+        },
+        child: Container(
+          width: 360,
+          height: 41,
+          decoration: ShapeDecoration(
+            color: Color(0xFF2A637B),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              'Choose a User',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+                height: 0,
               ),
             ),
           ),
         ),
-        body: ListView(
-          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+      ),
+      appBar: AppBar(
+        title: Text(
+          'Second Screen',
+          style: TextStyle(
+            color: Colors.black,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 35, horizontal: 20),
+        child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(Icons.arrow_back_ios),
-                ),
-                Text(
-                  'Second Screen',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                )
-              ],
+            Text(
+              'Welcome',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              ),
             ),
             SizedBox(
               height: 20,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Welcome',
-                  style: TextStyle(
-                    color: Color(0xFF04021D),
-                    fontSize: 12,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                Text(
-                  'John Doe',
-                  style: TextStyle(
-                    color: Color(0xFF04021D),
-                    fontSize: 18,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.3,
-                ),
-              ],
-            ),
-            Center(
-              child: Text(
-                'Selected User Namee',
+            Obx(
+              () => Text(
+                '${userController.users.isNotEmpty ? userController.users[0].firstName : ""} ${userController.users.isNotEmpty ? userController.users[0].lastName : ""}',
                 style: TextStyle(
-                  color: Color(0xFF04021D),
+                  color: Colors.black,
                   fontSize: 24,
                   fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-            )
+            ),
+            Container(
+              child: userController.users.isEmpty
+                  ? SizedBox(
+                      height: 300,
+                      child: Center(
+                        child: Text(
+                          'Selected Username',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 32,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(),
+            ),
           ],
         ),
       ),
